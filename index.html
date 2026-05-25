@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>半導体インテリジェンス — Semiconductor Intelligence Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">⬡ 半導体<span>インテリジェンス</span></div>
+  <nav class="main-nav">
+    <button class="nav-link active" data-section="device">🔬 デバイス構造</button>
+    <button class="nav-link" data-section="processflow">🌊 製造フロー</button>
+    <button class="nav-link" data-section="supplychain">🔗 サプライチェーン</button>
+    <button class="nav-link" data-section="roadmap">📊 技術ロードマップ</button>
+    <button class="nav-link" data-section="news">📰 ニュース</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ══ SECTION 1: DEVICE STRUCTURE ══════════════════════════════════════ -->
+<section id="sec-device" class="section">
+  <div class="section-header">
+    <h2 class="section-title">🔬 デバイス構造 — 用途別 芋づる探索</h2>
+    <p class="section-desc">用途を選んでデバイス全体像 → 基板スタック → 各層の材料・サプライヤー・プロセスまで一気に掘り下げ。ダイ層クリックでチップ断面ドリルダウンへ。</p>
+  </div>
+  <div id="device-section-root"></div>
+</section>
+
+<!-- ══ SECTION 2: PROCESS FLOW ══════════════════════════════════════════ -->
+<section id="sec-processflow" class="section hidden">
+  <div class="section-header">
+    <h2 class="section-title">🌊 製造フロー — 統合リバーダイアグラム</h2>
+    <p class="section-desc">原材料から製品まで — ロジック・基板・メモリ・パッシブの4トラックが合流するフロー図。ノードをクリックして材料・装置・サプライヤー詳細を確認。</p>
+  </div>
+  <div id="pf-legend" class="pf-legend"></div>
+  <div class="pf-layout">
+    <div class="pf-diagram-wrap">
+      <div id="pf-svg-container"></div>
+    </div>
+    <div id="pf-detail-panel" class="pf-detail-panel">
+      <div class="panel-placeholder">
+        <div class="hint-arrow">←</div>
+        <p>ノードをクリックすると<br>詳細を表示</p>
+        <p style="font-size:0.72rem;color:var(--muted);margin-top:0.25rem">材料・装置・<br>サプライヤー・隣接工程</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ SECTION 3: SUPPLY CHAIN ══════════════════════════════════════════ -->
+<section id="sec-supplychain" class="section hidden">
+  <div class="section-header">
+    <h2 class="section-title">🔗 サプライチェーン — 素材から製品まで</h2>
+    <p class="section-desc">原材料・装置・素材メーカーから半導体チップ・パッケージ・完成品まで。リスクレベルと地政学的集中度を可視化。</p>
+  </div>
+  <div id="supply-section-root"></div>
+</section>
+
+<!-- ══ SECTION 4: TECHNOLOGY ROADMAP ═══════════════════════════════════ -->
+<section id="sec-roadmap" class="section hidden">
+  <div class="section-header">
+    <h2 class="section-title">📊 技術ロードマップ — チップ・パッケージ・メーカー統合年表</h2>
+    <p class="section-desc">半導体スケーリング・パッケージング進化・主要メーカーの技術節点を同一時間軸で。カードをクリックして詳細を確認。</p>
+  </div>
+  <div id="roadmap-section-root"></div>
+</section>
+
+<!-- ══ SECTION 5: NEWS ══════════════════════════════════════════════════ -->
+<section id="sec-news" class="section hidden">
+  <div class="section-header">
+    <h2 class="section-title">📰 最新ニュース</h2>
+    <p class="section-desc">カテゴリでフィルタリング。クリックで外部ニュースサイトへ。</p>
+  </div>
+  <div id="news-filters" class="news-filters"></div>
+  <div id="news-grid" class="news-grid"></div>
+  <div style="margin-top:1.5rem;padding:1.1rem;background:var(--card);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+    <div>
+      <h4 style="font-size:0.85rem;font-weight:700;margin-bottom:0.2rem">外部情報源</h4>
+      <p style="font-size:0.75rem;color:var(--muted)">最新の半導体ニュースを専門サイトで確認</p>
+    </div>
+    <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-left:auto">
+      <a href="https://semiengineering.com" target="_blank" rel="noopener" class="news-link-btn-sm">Semiconductor Engineering</a>
+      <a href="https://www.anandtech.com" target="_blank" rel="noopener" class="news-link-btn-sm">AnandTech</a>
+      <a href="https://spectrum.ieee.org/semiconductors" target="_blank" rel="noopener" class="news-link-btn-sm">IEEE Spectrum</a>
+      <a href="https://www.techinsights.com/blog" target="_blank" rel="noopener" class="news-link-btn-sm">TechInsights</a>
+      <a href="https://www.digitimes.com" target="_blank" rel="noopener" class="news-link-btn-sm">DigiTimes</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div id="modal-overlay" class="hidden" onclick="if(event.target===this)closeModal()">
+  <div id="modal-box">
+    <button class="modal-close-btn" onclick="closeModal()">✕ 閉じる</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="data-extended.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
