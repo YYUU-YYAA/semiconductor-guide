@@ -837,6 +837,242 @@ const EXTENDED_DATA = {
        processRefs:['ENIG処理','はんだペースト印刷 (メタルマスク)','リフロー接合','AXI/X線検査'],
        relatedProcessIds:['inspection']},
     ],
+
+    'wearable': [
+      {id:'wbl_ap', name:'Apple S9 SiP AP ダイ', nameEn:'Apple S9 — SiP Application Processor (TSMC N4)',
+       thick:'~100μm', color:'#7c3aed', category:'die', vis:'die',
+       specs:'Apple S9: TSMC N4, Neural Engine, Bluetooth 5.3 / UWB 統合',
+       role:'Apple Watch S9の中核チップ。TSMCの4nmで製造されたARM系SoC。Neural Engine・センサーハブ・Bluetooth/UWB無線を全て1チップに集積。FOWLP超薄型SiPパッケージ内でPMICと並置実装',
+       materials:[
+         {name:'Si (TSMC N4)', specs:'4nm FinFET, Neural Engine 2世代', role:'AP/Neural Engine', supplierNames:['TSMC (Apple専用ライン)']},
+         {name:'Cu Pillar Bump', specs:'ピッチ100μm, h=40μm', role:'SiP基板FC接続', supplierNames:['JX金属','Atotech']},
+       ],
+       processRefs:['TSMC N4 ファブ','Cu Pillar Bumping','SiP FOWLP実装','KGD選別テスト'],
+       relatedProcessIds:['litho','etch','deposition','inspection']},
+
+      {id:'wbl_pmic', name:'PMIC (電源管理 IC)', nameEn:'PMIC — Power Management IC in SiP',
+       thick:'~100μm', color:'#1d4ed8', category:'die', vis:'die',
+       specs:'PMU: 効率>90%, バッテリー充電/電圧変換, 130nm BCD プロセス',
+       role:'バッテリー充電・電圧変換・電力配分を担うPMIC。AP Dieとともに同一SiPパッケージに搭載し信号線長を最短化。Dialog/Maxim/TI等が供給',
+       materials:[
+         {name:'Si (65-130nm BCD)', specs:'BCD (Bipolar-CMOS-DMOS)', role:'電源管理回路', supplierNames:['Dialog Semiconductor','Maxim (ADI)','TI']},
+       ],
+       processRefs:['BCD プロセス ファブ','FOWLP共同実装','電源テスト'],
+       relatedProcessIds:['deposition','inspection']},
+
+      {id:'wbl_rdl', name:'ファンアウト RDL (FOWLP 3層)', nameEn:'Fan-Out WLP — Multi-layer RDL Redistribution',
+       thick:'PBO絶縁 10μm × 3層', color:'#0f766e', category:'rdl', vis:'rdl',
+       specs:'PBO絶縁 + Cu mSAP L/S=5/5μm | ダイ間・ファンアウト再配線 3層',
+       role:'FOWLP (Fan-Out Wafer Level Package) のRDL再配線。複数ダイを樹脂モールドで一体化後、高密度多層再配線層を形成。ダイ間インターコネクトとSiP基板への接続を同時実現',
+       materials:[
+         {name:'PBO 絶縁膜', specs:'感光性, Dk<3.0', role:'ダイ間絶縁 + 再配線', supplierNames:['HD Micro Systems','東レ (BM系)','Fujifilm (WPR)']},
+         {name:'Cu RDL (mSAP)', specs:'L/S=5/5μm, 3層', role:'ファンアウト再配線', supplierNames:['Lam Research','AMAT']},
+       ],
+       processRefs:['ダイ埋込モールド (エポキシMC)','PBO スピンコート','mSAP Cu電解めっき','UBM形成'],
+       relatedProcessIds:['deposition','inspection']},
+
+      {id:'wbl_substrate', name:'超薄型 SiP 基板 (コアレス ABF)', nameEn:'Ultra-thin Coreless SiP Substrate',
+       thick:'0.10-0.15mm', color:'#1e3a5f', category:'substrate', vis:'abf',
+       specs:'コアレス ABF 4層, 厚さ0.10-0.15mm, BGA ピッチ0.35mm, 面積<10×10mm',
+       role:'Apple Watch S9 SiPの超薄型基板。BTコアを廃しABFのみで構成したコアレス多層基板。高さ制約が極めて厳しいウェアラブル向けに特化。IBIDEN・AT&S等が供給',
+       materials:[
+         {name:'ABF GX13T (コアレス)', specs:'Dk=3.0, Df=0.003, t=15μm', role:'超薄型多層絶縁', supplierNames:['味の素ファインテクノ (AFC)']},
+         {name:'Cu 極薄配線 (mSAP)', specs:'L/S=8/8μm, Cu 10μm', role:'高密度インターコネクト', supplierNames:['IBIDEN','AT&S']},
+       ],
+       processRefs:['コアレス ABF積層','mSAP Cu形成','極薄基板ハンドリング (支持基板使用)','BGA ボールマウント'],
+       relatedProcessIds:['deposition','inspection']},
+
+      {id:'wbl_lga', name:'LGA パッド (マザーボード接続)', nameEn:'LGA Interface — SiP to Watch PCB',
+       thick:'SR 15μm + ENIG 5μm', color:'#14532d', category:'pcb', vis:'bga',
+       specs:'LGA ピッチ 0.35mm, PAD径 0.2mm | OSP/ENIG | 面積<10×10mm',
+       role:'Apple Watch マザーボードへのSiP接続パッド。LGAはんだ接合 (リフロー) で搭載。落下耐性テストで厳格な信頼性評価',
+       materials:[
+         {name:'SR (感光性)', specs:'LDI露光, UL94-V0, Tg>150°C', role:'パッド間絶縁', supplierNames:['太陽インキ','Tamura']},
+         {name:'OSP / ENIG', specs:'ENIG: Ni=3μm + Au=0.05μm', role:'LGA PAD表面処理', supplierNames:['四国化成','Atotech']},
+       ],
+       processRefs:['SR LDI露光','OSP/ENIG処理','SiP搭載リフロー','落下・熱サイクル信頼性試験'],
+       relatedProcessIds:['inspection']},
+    ],
+
+    'coreless': [
+      {id:'clss_cpu', name:'Compute Tile (CPU ロジック)', nameEn:'Compute Chiplet — CPU Logic Die',
+       thick:'~100μm', color:'#7c3aed', category:'die', vis:'die',
+       specs:'Intel MTL / AMD Zen5c: N3/N4 FinFET, 面積<30mm²',
+       role:'3チップレット構成のコンピュートダイ。CPU/ALU/L3キャッシュを集積。隣のGPUダイ・IOダイとμBumpで接続。チップレット化で製造歩留まりと設計柔軟性を改善',
+       materials:[
+         {name:'Si (N3/N4 FinFET)', specs:'TSMC N3B/N4P, 面積<30mm²', role:'CPU/LLC演算コア', supplierNames:['TSMC (N3)','Intel Foundry']},
+         {name:'μBump (Cu Pillar+SnAg)', specs:'ピッチ36-55μm, h=15μm', role:'隣接タイル間接続', supplierNames:['JX金属','Atotech']},
+       ],
+       processRefs:['TSMC N3/N4 ファブ','μBump形成','NCF アンダーフィル','TDBI面内テスト'],
+       relatedProcessIds:['litho','etch','deposition','inspection']},
+
+      {id:'clss_gpu', name:'GPU / GFX Tile', nameEn:'GPU Chiplet — Graphics Processing Die',
+       thick:'~100μm', color:'#1d4ed8', category:'die', vis:'die',
+       specs:'AMD RDNA4 / Intel Xe-LPG: N4P, 面積<40mm², HBMインターフェース',
+       role:'グラフィクス処理を担うチップレット。AI推論加速器 (Shader) とメモリコントローラを集積。ComputeタイルとμBumpで高帯域幅接続 (1-4Tbps)',
+       materials:[
+         {name:'Si (N4P)', specs:'TSMC N4P, RDNA4/Xe-LPG GPU', role:'GPU/AI演算タイル', supplierNames:['TSMC']},
+         {name:'μBump (36μm pitch)', specs:'Cu Pillar+SnAg', role:'Compute Tile接続', supplierNames:['JX金属']},
+       ],
+       processRefs:['TSMC N4P ファブ','GPU μBump形成','Chip-on-Wafer (CoW) 積層'],
+       relatedProcessIds:['litho','deposition','inspection']},
+
+      {id:'clss_io', name:'IO Tile (PCIe/DDR/USB)', nameEn:'IO Chiplet — Interface & I/O Die',
+       thick:'~100μm', color:'#0369a1', category:'die', vis:'die',
+       specs:'Intel EMIB / AMD N6: LPDDR5/DDR5, PCIe 5.0/CXL, USB4',
+       role:'外部インターフェースを集中したIOチップレット。DDR5/LPDDR5・PCIe 5.0/CXL・USB4を集積。古いノード (N6-N7) で製造してコスト最適化',
+       materials:[
+         {name:'Si (N6/N7)', specs:'TSMC N6, IOコントローラ集積', role:'PCIe/DDR5/USB IO', supplierNames:['TSMC','GlobalFoundries']},
+       ],
+       processRefs:['TSMC N6/N7 ファブ','IO μBump形成','マルチタイル統合テスト'],
+       relatedProcessIds:['litho','deposition','inspection']},
+
+      {id:'clss_ubump', name:'μBump + NCF アンダーフィル', nameEn:'μBump + Non-Conductive Film Underfill',
+       thick:'バンプ15μm + NCF 15μm', color:'#78350f', category:'underfill', vis:'bump',
+       specs:'μBump: ピッチ36-55μm, h=15μm | NCF: Tg>160°C, 超低応力 | 接合200-250°C',
+       role:'3チップレット間のμBumpと基板接続バンプ。NCF (Non-Conductive Film) アンダーフィルで熱ストレスを緩和。TC Bonding後NCF後硬化',
+       materials:[
+         {name:'μBump Cu Pillar+SnAg', specs:'ピッチ36μm (タイル間), 55μm (基板側)', role:'チップレット間・対基板接続', supplierNames:['JX金属','Atotech','Alpha Assembly']},
+         {name:'NCF', specs:'Tg>160°C, 低弾性率', role:'熱サイクル信頼性', supplierNames:['レゾナック (旧日立化成)','住友化学','Namics']},
+       ],
+       processRefs:['μBump TC Bonding 250°C','NCF後硬化 (180°C/1h)','AOI + X線検査'],
+       relatedProcessIds:['deposition','inspection']},
+
+      {id:'clss_abf', name:'ABF ビルドアップ (コアレス 4-8層)', nameEn:'Coreless FC-BGA — ABF Buildup Only (No BT Core)',
+       thick:'0.3-0.5mm (ABFのみ)', color:'#1e3a5f', category:'substrate', vis:'abf',
+       specs:'ABF GX13/GX92: 4-8層ビルドアップ | BTコアなし | ビア径30μm | 反り管理が最難関',
+       role:'BTコアを一切持たないコアレスFC-BGA基板。薄型化・信号品質改善が課題。スティフナー (補強枠) やモールドによる反り管理が必要。IBIDEN・Shinko・Unimicronが主要サプライヤー',
+       materials:[
+         {name:'ABF GX13T / GX92', specs:'Dk=3.0, Df=0.003, t=20-25μm × 4-8層', role:'コアレスビルドアップ絶縁', supplierNames:['味の素ファインテクノ (AFC) — 事実上独占']},
+         {name:'Cu 配線 (mSAP L/S=5/5μm)', specs:'mSAP, Cu 10-15μm', role:'高密度配線', supplierNames:['IBIDEN (世界1位)','Shinko','Unimicron']},
+       ],
+       processRefs:['コアレスABFビルドアップ積層','CO₂/UVレーザービア (径30μm)','Cu mSAP形成','反り管理 (スティフナー/モールド)','AOI + AXI全数検査'],
+       relatedProcessIds:['deposition','etch','inspection']},
+
+      {id:'clss_bga', name:'BGA ボール (C5 外部接続)', nameEn:'C5 BGA — Controlled Collapse Chip Connection',
+       thick:'ボール径650μm', color:'#475569', category:'pcb', vis:'bga',
+       specs:'C5 BGA: ピッチ1.0mm, 径650μm, SAC305 | 基板サイズ50-80mm角 | ピン数>5000',
+       role:'コアレスFC-BGA基板底面のBGAボール。C5リフロー接合でマザーボードへ。反りによるCoplanarity管理 (<150μm) が重要',
+       materials:[
+         {name:'SAC305 BGAボール', specs:'径650μm, ピッチ1.0mm, Tm=217°C', role:'マザーボード接続', supplierNames:['Senju Metal','Indium Corp','Alpha Assembly']},
+         {name:'Cu OSP / ENIG (PAD)', specs:'OSP有機被膜またはENIG', role:'ボール接合面処理', supplierNames:['四国化成','Atotech']},
+       ],
+       processRefs:['BGAボール搭載','リフロー 260°C ピーク','Coplanarity測定 (AXI)','電気導通テスト (ICT)'],
+       relatedProcessIds:['inspection']},
+
+      {id:'clss_pcb', name:'マザーボード PCB (PCIe 5.0/DDR5)', nameEn:'Motherboard PCB — High-Speed Logic Board',
+       thick:'4.0-6.0mm (18-24層)', color:'#064e3b', category:'pcb', vis:'pcb',
+       specs:'Dk=3.3-3.5, Df=0.003 @10GHz | 18-24層 | PCIe 5.0 (32GT/s) + DDR5-6400対応',
+       role:'大型コアレスFC-BGAチップレットを搭載するマザーボード。PCIe 5.0・DDR5・CXLの高速信号に対応した超低損失積層板を使用。インピーダンス制御・差動ペア配線が必須',
+       materials:[
+         {name:'Megtron 6G / IT-988 GS', specs:'Dk=3.3, Df=0.003 @10GHz', role:'高速信号層', supplierNames:['Panasonic CM','Isola IT-988']},
+         {name:'HVLP Cu箔', specs:'Roughness Rz<1μm', role:'スキン効果損失低減', supplierNames:['JX金属','Mitsui Mining']},
+       ],
+       processRefs:['超多層積層 (18-24層)','高速信号インピーダンス制御','BGA ソケット実装','TDR測定'],
+       relatedProcessIds:['inspection']},
+    ],
+
+    'memory-dimm': [
+      {id:'dimm_dram', name:'DDR5 DRAM Die (16Gbit)', nameEn:'DDR5 DRAM Die — Samsung 1β / Micron 1α',
+       thick:'~100μm', color:'#6d28d9', category:'memory', vis:'memory',
+       specs:'Samsung 1β / Micron 1α: DDR5-6400, 16Gbit, Vdd=1.1V, 7.2Gbps/pin',
+       role:'DDR5メモリセルダイ。Samsung (1β ~14nm)、Micron (1α ~15nm)、SK Hynix (1a) が最先端ノードで製造。ダイあたり容量16-32Gbit。KGD選別後FBGA封止',
+       materials:[
+         {name:'Si メモリセルアレイ (1β/1α)', specs:'Samsung 1β~14nm, Micron 1α~15nm', role:'DRAMセルアレイ', supplierNames:['Samsung (1β)','Micron (1α)','SK Hynix (1a)']},
+         {name:'ワイヤーボンド (Au/Cu)', specs:'Au/Cuワイヤ, ループ高さ<150μm', role:'DRAM Die→FBGA基板接続', supplierNames:['MK Electron','Heraeus','Tanaka']},
+       ],
+       processRefs:['DRAM 1β/1αファブ','プローブカードウェーハテスト','ダイシング','ワイヤーボンディング (多段)','EMCモールド封止'],
+       relatedProcessIds:['litho','etch','deposition','inspection']},
+
+      {id:'dimm_fbga', name:'FBGA パッケージ基板 (2層)', nameEn:'FBGA Substrate — 2-Layer BT Organic Package Board',
+       thick:'0.18mm', color:'#1e3a5f', category:'substrate', vis:'core',
+       specs:'FBGA基板: 2層, BTコア, ビアφ75μm, ピッチ0.8mm | 面積<10×12mm',
+       role:'DRAM FBGAパッケージの基板。BT樹脂コアに2層Cu配線。ダイ搭載面にAgペーストダイアタッチ後、ワイヤーボンディングで接続。SEM (Samsung)・Amkor・ASEが封止工程を実施',
+       materials:[
+         {name:'BT 基板コア (FBGAグレード)', specs:'Tg=180°C, 2層, 厚さ0.18mm', role:'DRAM FBGAパッケージ基板', supplierNames:['三菱ガス化学','Isola']},
+         {name:'Agペーストダイアタッチ', specs:'銀ペースト, キュア150°C', role:'ダイ固定', supplierNames:['Heraeus','Alpha Assembly','AIM']},
+       ],
+       processRefs:['ダイアタッチ (Agペースト)','ワイヤーボンド (多段)','EMC モールド 175°C','レーザーマーキング','電気テスト'],
+       relatedProcessIds:['assembly','inspection']},
+
+      {id:'dimm_sr', name:'ソルダーレジスト + ENIG (FBGA底面)', nameEn:'Solder Resist + ENIG — FBGA Package Bottom',
+       thick:'SR 20μm + Ni3μm + Au0.05μm', color:'#14532d', category:'substrate', vis:'sr',
+       specs:'FBGA BGA PAD: ピッチ0.8mm, 径0.4mm | ENIG: Ni3μm + Au0.05μm',
+       role:'FBGA基板底面のBGA接続パッド。LDI露光ソルダーレジストでパッド間絶縁。ENIGで表面処理し、SnAg (SAC305) はんだボールをマウントしてDIMM基板にリフロー接合',
+       materials:[
+         {name:'SR (感光性)', specs:'LDI露光, 開口径0.4mm', role:'パッド間絶縁', supplierNames:['太陽インキ','Tamura']},
+         {name:'ENIG', specs:'Ni=3μm, Au=0.05μm', role:'BGA PAD表面処理', supplierNames:['Atotech','MacDermid']},
+       ],
+       processRefs:['SR LDI露光','ENIG処理','SnAg BGAボールマウント','リフロー'],
+       relatedProcessIds:['inspection']},
+
+      {id:'dimm_pcb', name:'RDIMM PCB (6層 FR4)', nameEn:'RDIMM PCB — 6-layer DDR5 Module Board',
+       thick:'1.2mm (6層)', color:'#064e3b', category:'pcb', vis:'pcb',
+       specs:'FR4: Dk=4.3, Df=0.015 | 6層 | DDR5 fly-by topology | 両面DRAM実装 (最大18個)',
+       role:'DDR5 RDIMMのモジュール基板。両面に最大18個のDRAMパッケージを搭載。Fly-byトポロジーでCK/CMD/ADDR信号を配線。RCD (Register Clock Driver) も搭載',
+       materials:[
+         {name:'FR4 (IT-180A / S1000H)', specs:'Dk=4.3, Df=0.015, Tg=180°C', role:'DIMM モジュール基板', supplierNames:['Isola IT-180A','Shengyi S1000H','ITEQ IT-180A']},
+         {name:'OSP Cu PAD', specs:'OSP有機皮膜, リフロー対応', role:'DRAM BGA PAD', supplierNames:['四国化成']},
+       ],
+       processRefs:['FR4 6層積層','DRAM BGA リフロー (両面)','Fly-by配線インピーダンス制御','ATE メモリテスト (DDR5-6400)'],
+       relatedProcessIds:['assembly','inspection']},
+
+      {id:'dimm_edge', name:'エッジコネクタ (DDR5 288ピン 金メッキ)', nameEn:'DDR5 Edge Connector — 288-pin Gold-plated',
+       thick:'Au 0.5-1.0μm (Niベース)', color:'#b45309', category:'pcb', vis:'enig',
+       specs:'DDR5: 288ピン, ピッチ0.8mm | Au厚0.5-1.0μm (Ni下地) | 抜き差し耐久30回+',
+       role:'DIMMスロットへの金メッキエッジコネクタ。DDR5規格で288ピン (PCB両面に各144ピン)。繰り返しの抜き差しに耐えるためAu層は厚め (0.5-1.0μm)。金の高い導電性で安定接触を確保',
+       materials:[
+         {name:'Au メッキ (Ni下地)', specs:'Ni=3-5μm + Au=0.5-1.0μm (厚金)', role:'コネクタ接点耐久性確保', supplierNames:['Atotech','MacDermid','奥野製薬']},
+       ],
+       processRefs:['ENIG/ENEPIG処理 (厚金)','エッジコネクタ金メッキ','接触抵抗測定 (4端子法)','JEDEC DDR5 コンプライアンステスト'],
+       relatedProcessIds:['inspection']},
+    ],
+
+    'fpc': [
+      {id:'fpc_coverlay', name:'PI カバーレイ (上面保護)', nameEn:'Polyimide Coverlay — Top Protection Film',
+       thick:'PI 25μm + 接着剤 25μm', color:'#ca8a04', category:'substrate', vis:'fpc',
+       specs:'PI: Tg>250°C, 引張強度>150MPa | 接着剤: アクリル/エポキシ系',
+       role:'FPC上面を保護するポリイミド (PI) フィルム。接着剤でラミネートし、Cu回路以外を絶縁保護。打ち抜き/LDI露光でランド部を開口。耐屈曲性・耐薬品性に優れる',
+       materials:[
+         {name:'PI フィルム (カプトン/ユーピレックス)', specs:'25μm, Tg>250°C, UL94-V0', role:'FPC上面保護絶縁', supplierNames:['東レ・デュポン (Kapton)','宇部興産 (Upilex-S)','SKC Kolon']},
+         {name:'アクリル/エポキシ接着剤', specs:'厚さ25μm, 熱プレス 160°C', role:'PI-Cu密着', supplierNames:['味の素ファインテクノ','日東電工','3M']},
+       ],
+       processRefs:['PIフィルムラミネート (熱プレス)','LDI露光/打ち抜きランド開口','AOI検査'],
+       relatedProcessIds:['inspection']},
+
+      {id:'fpc_cu', name:'Cu 配線層 (12μm 電解銅)', nameEn:'Copper Signal Layer — ED / RA Copper Foil',
+       thick:'12-18μm (ED/RA Cu)', color:'#b45309', category:'substrate', vis:'cu',
+       specs:'ED Cu: 12μm (微細加工) / RA Cu: 12-35μm (高屈曲) | L/S=30/30μm | 屈曲R=0.5mm',
+       role:'FPCの信号・電源配線層。ED (電解) 銅箔は薄くL/S微細加工が容易。RA (圧延) 銅箔は結晶方位が揃い繰り返し屈曲に強い。折り畳みスマートフォン内部の折り畳み部にはRA銅箔が必須',
+       materials:[
+         {name:'ED 銅箔 (12μm)', specs:'表面粗さRz<1.5μm, 引張強度>25kgf/mm²', role:'信号・電源配線', supplierNames:['JX金属','福田金属箔粉工業','Mitsui Mining']},
+         {name:'RA 銅箔 (12-18μm)', specs:'圧延銅, 屈曲寿命10万回+', role:'高屈曲部配線', supplierNames:['JX金属 (BHY)','古河電工']},
+       ],
+       processRefs:['Cu箔ラミネート','フォトリソグラフィー (DFR)','エッチング (CuCl₂)','外形打ち抜き','AOI'],
+       relatedProcessIds:['etch','inspection']},
+
+      {id:'fpc_base', name:'PI ベースフィルム (25-50μm)', nameEn:'Polyimide Base Film — FPC Core Insulator',
+       thick:'25-50μm', color:'#a16207', category:'substrate', vis:'fpc',
+       specs:'PI: Dk=3.4, Df=0.003, CTE=20ppm/°C, 引張強度>180MPa | フォルダブル用: 最薄12.5μm',
+       role:'FPCの基材となるポリイミド絶縁フィルム。高耐熱 (260°C)・高機械強度・高絶縁性を両立。東レ・デュポン製Kapton / 宇部興産製Upilex-Sが業界標準。折り畳みスマートフォンのヒンジ部FPCには12.5μm超薄型を使用',
+       materials:[
+         {name:'カプトン E (PI ベース)', specs:'25μm, Dk=3.4, 引張>180MPa, 耐熱260°C', role:'FPC基材絶縁', supplierNames:['東レ・デュポン (Kapton)','宇部興産 (Upilex-S)','Kaneka']},
+         {name:'Cu箔ラミネート接着剤', specs:'エポキシ/アクリル, 熱硬化', role:'PI-Cu密着', supplierNames:['味の素ファインテクノ','Loctite (Henkel)']},
+       ],
+       processRefs:['PIフィルムCu箔ラミネート (ロール-to-ロール)','湿度管理 (吸水率<2%)','PIフィルム張力管理'],
+       relatedProcessIds:['inspection']},
+
+      {id:'fpc_acf', name:'ACF / はんだパッド (コネクタ部)', nameEn:'ACF / Solder Pads — FPC Connector Interface',
+       thick:'ACF 20μm またははんだパッド', color:'#14532d', category:'pcb', vis:'bga',
+       specs:'ACF: 粒径φ3-5μm Ni/Auボール, 接続温度180°C | ZIF コネクタ用ランド',
+       role:'FPC端部の外部接続部。ACF (異方性導電フィルム) でドライバIC・ガラスパネル等に熱圧着接続。またははんだパッドでZIF/LIF FPCコネクタに接続 (スマートフォン内配線)',
+       materials:[
+         {name:'ACF (異方性導電フィルム)', specs:'粒径φ3-5μm Ni/Auボール', role:'ガラス/FPC間導電接続', supplierNames:['デクセリアルズ (旧Sony Chem)','3M','レゾナック']},
+         {name:'ENIG (ZIF用PAD)', specs:'Ni=3μm, Au=0.05μm', role:'ZIFコネクタ接点', supplierNames:['Atotech','MacDermid']},
+       ],
+       processRefs:['ACF熱圧着 (180°C/3MPa)','ZIFコネクタ接合','接触抵抗測定','FPC屈曲試験 (R=0.5mm, 10万回)'],
+       relatedProcessIds:['inspection']},
+    ],
   },
 
   // ── SUPPLY CHAIN RISKS (Geopolitics) ────────────────────────────────────

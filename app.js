@@ -994,6 +994,10 @@ const CHAIN_APP_META = {
   'antenna-organic': { icon: '📶', name: 'AiP 有機基板 (mmWave)',  desc: '低損失有機多層基板 (Megtron 7N/ABF-GX92) にRFICをFC実装', device: 'smartphone' },
   'antenna-glass':   { icon: '🔷', name: 'AiP ガラス基板 (TGV)',   desc: '次世代ガラスコア基板 — TGV貫通電極+Dk=3.7-5.5 超低損失', device: 'smartphone' },
   'datacenter':      { icon: '🔌', name: 'DC スイッチ / 光',       desc: 'Broadcom Tomahawk5 + シリコンフォトニクス', device: 'server' },
+  'wearable':        { icon: '⌚', name: 'ウェアラブル SiP',        desc: 'Apple Watch S9 — FOWLP + コアレス超薄型 SiP', device: 'smartphone' },
+  'coreless':        { icon: '🔲', name: 'コアレス FC-BGA 3Chiplet', desc: 'Compute+GPU+IO — BTコアなし ABFのみの次世代基板 (Intel Meteor Lake型)', device: 'server' },
+  'memory-dimm':     { icon: '🧮', name: 'DDR5 RDIMM',             desc: 'DDR5 DRAM — FBGA + RDIMMモジュール PCB + エッジコネクタ', device: 'server' },
+  'fpc':             { icon: '📏', name: 'フレキシブル基板 (FPC)',   desc: 'PI ベースフィルム + Cu 配線 + カバーレイ — スマートフォン内配線', device: 'smartphone' },
 };
 
 // ── VIS TYPE HELPERS ────────────────────────────────────────────────────────
@@ -1017,6 +1021,7 @@ function deriveVis(layer) {
   if (id.includes('rogers') || id.includes('ptfe')) return 'rogers';
   if (id.includes('bump') || cat === 'bump') return 'bump';
   if (id.includes('patch') || id.includes('antenna')) return 'antenna';
+  if (id.startsWith('fpc_')) return 'fpc';
   if (cat === 'pcb') return 'pcb';
   if (cat === 'substrate') return 'abf';
   return 'abf';
@@ -1025,7 +1030,7 @@ function deriveVis(layer) {
 const XS_VH = {
   die:58, memory:52, interposer:42, underfill:11, rdl:24,
   cu:13, abf:28, sr:11, enig:8, core:56, bga:30, pcb:48,
-  ltcc:40, glass:40, rogers:30, bump:14, antenna:20
+  ltcc:40, glass:40, rogers:30, bump:14, antenna:20, fpc:18
 };
 
 function buildDeviceSection() {
@@ -1131,6 +1136,13 @@ function drawSubstrateCrossSection(appId, layers, container) {
   let i = 0;
   while (i < layers.length) {
     const v = deriveVis(layers[i]);
+    if ((v === 'die' || v === 'memory') && i + 2 < layers.length) {
+      const v2 = deriveVis(layers[i + 1]), v3 = deriveVis(layers[i + 2]);
+      if ((v2 === 'die' || v2 === 'memory') && (v3 === 'die' || v3 === 'memory')) {
+        groups.push({ type: 'triple', a: layers[i], b: layers[i + 1], c: layers[i + 2] });
+        i += 3; continue;
+      }
+    }
     if ((v === 'die' || v === 'memory') && i + 1 < layers.length) {
       const v2 = deriveVis(layers[i + 1]);
       if (v2 === 'die' || v2 === 'memory') {
@@ -1145,9 +1157,14 @@ function drawSubstrateCrossSection(appId, layers, container) {
   // Calculate Y for each group
   const groupY = [];
   let cy = 24;
+  function groupH(g) {
+    if (g.type === 'triple') return Math.max(lh(g.a), lh(g.b), lh(g.c)) + 2;
+    if (g.type === 'pair')   return Math.max(lh(g.a), lh(g.b)) + 2;
+    return lh(g.layer);
+  }
   groups.forEach(g => {
     groupY.push(cy);
-    cy += g.type === 'pair' ? Math.max(lh(g.a), lh(g.b)) + 2 : lh(g.layer);
+    cy += groupH(g);
   });
   const totalH = cy + 18;
 
@@ -1160,7 +1177,7 @@ function drawSubstrateCrossSection(appId, layers, container) {
   let svY1 = null, svY2 = null;
   groups.forEach((g, gi) => {
     const v = g.type === 'single' ? deriveVis(g.layer) : 'die';
-    if (subVis.has(v)) { if (svY1 === null) svY1 = groupY[gi]; svY2 = groupY[gi] + lh(g.layer); }
+    if (subVis.has(v)) { if (svY1 === null) svY1 = groupY[gi]; svY2 = groupY[gi] + groupH(g); }
   });
   if (svY1 !== null) {
     [0.22, 0.5, 0.78].forEach(f => {
@@ -1264,16 +1281,26 @@ function drawSubstrateCrossSection(appId, layers, container) {
   groups.forEach((grp, gi) => {
     const gy = groupY[gi];
 
-    if (grp.type === 'pair') {
+    if (grp.type === 'triple') {
+      const [a, b, c] = [grp.a, grp.b, grp.c];
+      const gh = Math.max(lh(a), lh(b), lh(c)) + 2;
+      const gap = 3, dieW = Math.floor((CS_W - 2 * gap) / 3);
+      const cW = CS_W - 2 * dieW - 2 * gap;
+      const aX = CS_X0, bX = CS_X0 + dieW + gap, cX = CS_X0 + 2 * (dieW + gap);
+      svg.appendChild(addLayerGroup(a, aX, gy + Math.round((gh - lh(a)) / 2), dieW, lh(a)));
+      svg.appendChild(addLayerGroup(b, bX, gy + Math.round((gh - lh(b)) / 2), dieW, lh(b)));
+      svg.appendChild(addLayerGroup(c, cX, gy + Math.round((gh - lh(c)) / 2), cW, lh(c)));
+      [a, b, c].forEach(l => labelData.push({ srcY: gy + lh(l) / 2, name: l.name.length > 22 ? l.name.slice(0, 21) + '…' : l.name }));
+    } else if (grp.type === 'pair') {
       const [a, b] = [grp.a, grp.b];
-      const groupH = Math.max(lh(a), lh(b)) + 2;
+      const gh = Math.max(lh(a), lh(b)) + 2;
       // Memory (40%) | gap | Logic die (60%)
       const isAMem = deriveVis(a) === 'memory';
       const [memL, dieL] = isAMem ? [a, b] : [b, a];
       const memW = Math.round(CS_W * 0.38), gap = 4, dieW = CS_W - memW - gap;
       const memX = CS_X0, dieX = CS_X0 + memW + gap;
-      const memY = gy + Math.round((groupH - lh(memL)) / 2);
-      const dieY = gy + Math.round((groupH - lh(dieL)) / 2);
+      const memY = gy + Math.round((gh - lh(memL)) / 2);
+      const dieY = gy + Math.round((gh - lh(dieL)) / 2);
       svg.appendChild(addLayerGroup(memL, memX, memY, memW, lh(memL)));
       svg.appendChild(addLayerGroup(dieL, dieX, dieY, dieW, lh(dieL)));
       labelData.push({ srcY: gy + lh(memL) / 2, name: memL.name.length > 22 ? memL.name.slice(0, 21) + '…' : memL.name });
@@ -1558,15 +1585,28 @@ function drawXsPattern(g, vis, x0, x1, y, h, baseColor, NS) {
       circle(bx, y + 2, 3, '#f59e0b', null);
     }
   }
+
+  if (vis === 'fpc') {
+    // Polyimide film: amber tint + horizontal grain lines
+    rect(x0, y, W, h, 'rgba(251,191,36,0.10)', '0', null);
+    const nGrain = Math.max(2, Math.floor(h / 6));
+    for (let gl = 1; gl < nGrain; gl++)
+      line(x0 + 4, y + gl * h / nGrain, x1 - 4, y + gl * h / nGrain, 'rgba(251,191,36,0.18)', 0.6);
+    // Edge wave to indicate flexibility
+    let dPath = `M${x0 + 4},${y + h / 2}`;
+    for (let wx = x0 + 14; wx < x1 - 8; wx += 18)
+      dPath += ` Q${wx},${y + 2} ${wx + 9},${y + h / 2} Q${wx + 18},${y + h - 2} ${wx + 18},${y + h / 2}`;
+    const waveEl = document.createElementNS(NS, 'path');
+    waveEl.setAttribute('d', dPath); waveEl.setAttribute('fill', 'none');
+    waveEl.setAttribute('stroke', 'rgba(251,191,36,0.28)'); waveEl.setAttribute('stroke-width', '1');
+    add(waveEl);
+  }
 }
 
 function showChainLayerDetail(appId, layerId) {
   const layers = EXTENDED_DATA.substrateLayers[appId];
   const layer = layers?.find(l => l.id === layerId);
   if (!layer) return;
-
-  document.querySelectorAll('.chain-layer').forEach(el => el.classList.remove('selected'));
-  document.querySelector(`.chain-layer[data-layerid="${layerId}"]`)?.classList.add('selected');
 
   const matCards = (layer.materials || []).map(m => `
     <div class="chain-mat-card">
@@ -1580,7 +1620,7 @@ function showChainLayerDetail(appId, layerId) {
 
   const procItems = (layer.processRefs || []).map(p => `<li>${p}</li>`).join('');
 
-  document.getElementById('chain-detail-panel').innerHTML = `
+  const html = `
     <div class="panel-header" style="margin-bottom:0.75rem">
       <div>
         <h3 class="panel-title" style="font-size:0.9rem">${layer.name}</h3>
@@ -1595,6 +1635,34 @@ function showChainLayerDetail(appId, layerId) {
       <button class="pf-jump-btn" onclick="jumpToSection('processflow')">🌊 製造フローで見る →</button>
       ${layer.category === 'die' ? `<button class="pf-jump-btn" style="background:#4c1d95" onclick="openDrillModal('${appId}')">🔬 チップ断面ドリルダウン →</button>` : ''}
     </div>`;
+
+  if (window.innerWidth <= 900) {
+    showMobileBottomSheet(html);
+  } else {
+    document.getElementById('chain-detail-panel').innerHTML = html;
+  }
+}
+
+function showMobileBottomSheet(html) {
+  document.getElementById('xs-sheet-overlay')?.remove();
+  const overlay = document.createElement('div');
+  overlay.id = 'xs-sheet-overlay';
+  overlay.className = 'xs-sheet-overlay';
+  overlay.innerHTML = `
+    <div class="xs-sheet" id="xs-sheet">
+      <div class="xs-sheet-handle"></div>
+      <button class="xs-sheet-close" onclick="closeBottomSheet()">✕ 閉じる</button>
+      ${html}
+    </div>`;
+  overlay.addEventListener('click', e => { if (e.target === overlay) closeBottomSheet(); });
+  document.body.appendChild(overlay);
+}
+
+function closeBottomSheet() {
+  const el = document.getElementById('xs-sheet-overlay');
+  if (!el) return;
+  el.querySelector('.xs-sheet')?.classList.add('xs-sheet-closing');
+  setTimeout(() => el.remove(), 280);
 }
 
 function openDrillModal(appId) {
